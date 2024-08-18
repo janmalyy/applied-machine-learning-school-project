@@ -1,0 +1,202 @@
+(spuštění celého complex_model.py se všemi modely trvá tak 8 minut.)
+# on test set
+Dummy Model Train MSE: 0.15397974449523125
+Dummy Model Test MSE: 0.0016706150722504288
+
+Linear Model Train MSE: 0.1350892787766626
+Linear Model Test MSE: 0.0005411301104972294
+
+RNN Model Train MSE: 0.13127691122149088
+RNN Model Test MSE: 0.09568639546144546
+
+LSTM Model Train MSE: 0.12911253666019576
+LSTM Model Test MSE: 0.10826869082860464
+
+Complex Model Train MSE: 0.1280727276193123
+Complex Model Test MSE: 0.0003131930704658831
+
+Transformer Model Train MSE: 0.1320642353291075
+Transformer Model Test MSE: 0.0774022516956385
+
+***Při druhém spuštění takto:***
+Dummy Model Train MSE: 0.15397974449523125
+Dummy Model Test MSE: 0.0016706150722504288
+
+Linear Model Train MSE: 0.1350892787766626
+Linear Model Test MSE: 0.0005411301104972294
+
+RNN Model Train MSE: 0.14376091734073282
+RNN Model Test MSE: 1.1148638979727792
+
+LSTM Model Train MSE: 0.130911084459062
+LSTM Model Test MSE: 0.00044490638626305844
+
+Complex Model Train MSE: 0.12927719332289941
+Complex Model Test MSE: 0.09694459254959628
+
+Transformer Model Train MSE: 0.13022417936523945
+Transformer Model Test MSE: 0.08827226258769279
+__________________________________________________________________________________________________________
+# on validation set
+Dummy Model Train MSE: 0.15397974449523125
+Dummy Model val MSE: 0.047612991056438556
+
+Linear Model Train MSE: 0.1350892787766626
+Linear Model val MSE: 0.04368297081123109
+
+RNN Model Train MSE: 0.12966589729773742
+RNN Model val MSE: 0.044441233302314094
+
+LSTM Model Train MSE: 0.13093865104252955
+LSTM Model val MSE: 0.01653669335071519
+
+Complex Model Train MSE: 0.00031432436472663084
+Complex Model val MSE: 0.00024206715027836432
+
+Transformer Model Train MSE: 0.13085954312505071
+Transformer Model val MSE: 0.018119704083166106
+
+***Při druhém spuštění takto:***
+Dummy Model Train MSE: 0.15397974449523125
+Dummy Model val MSE: 0.047612991056438556
+
+Linear Model Train MSE: 0.1350892787766626
+Linear Model val MSE: 0.04368297081123109
+
+RNN Model Train MSE: 0.13082000068191316
+RNN Model val MSE: 0.07347035187865315
+
+LSTM Model Train MSE: 0.13009391500549933
+LSTM Model val MSE: 0.015160747291346283
+
+Complex Model Train MSE: 0.1290908690400515
+Complex Model val MSE: 0.041800138808473566	# nechápu, proč se to tady tak liší; mělo by to být stejné nastavení, hm:/
+
+Transformer Model Train MSE: 0.13106519141735695
+Transformer Model val MSE: 0.017161280748635453
+
+__________________________________________________________________________________________________________
+# on validation set
+***********
+3x LSTM with 100 units
+***********
+model = Sequential()
+model.add(LSTM(100, activation='relu', input_shape=(train_features.shape[1], train_features.shape[2]), return_sequences=True))
+model.add(LSTM(100, activation='relu', return_sequences=True))
+model.add(LSTM(100, activation='relu'))
+model.add(Dense(1))
+_____________________________________________________
+Complex Model Train MSE: 0.00031432436472663084
+Complex Model val MSE: 0.00024206715027836432
+
+
+***********
+4x LSTM with 100 units with dropout and reccurent dropout set to 0.2
+***********
+model = Sequential()
+model.add(LSTM(100, activation='relu', input_shape=(train_features.shape[1], train_features.shape[2]),
+                   return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(LSTM(100, activation='relu', return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(LSTM(100, activation='relu', return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(LSTM(100, activation='relu', dropout=0.2, recurrent_dropout=0.2))
+model.add(Dense(1))
+_____________________________________________________
+Complex Model Train MSE: 0.0011982748668722231
+Complex Model val MSE: 0.0007321137741970257
+
+
+
+***********
+Complex model made by ChatGPT
+***********
+
+model = Sequential()
+
+# First Bidirectional LSTM layer with Batch Normalization and dropout
+model.add(Bidirectional(LSTM(units=128, return_sequences=True, recurrent_dropout=0.2, kernel_regularizer=l2(0.01)),
+                        input_shape=(train_features.shape[1], train_features.shape[2])))
+model.add(BatchNormalization())
+model.add(Dropout(0.2))
+
+# Second Bidirectional LSTM layer with Batch Normalization and dropout
+model.add(Bidirectional(LSTM(units=64, return_sequences=True, recurrent_dropout=0.2, kernel_regularizer=l2(0.01))))
+model.add(BatchNormalization())
+model.add(Dropout(0.2))
+
+# Third LSTM layer without bidirectionality
+model.add(LSTM(units=32, return_sequences=False, recurrent_dropout=0.2, kernel_regularizer=l2(0.01)))
+model.add(BatchNormalization())
+model.add(Dropout(0.2))
+
+# Dense layer
+model.add(Dense(units=64, activation='relu'))
+model.add(Dropout(0.2))
+
+# Output layer
+model.add(Dense(1))
+
+# Compile the model with gradient clipping
+optimizer = Adam(clipvalue=1.0)
+model.compile(optimizer=optimizer, loss='mse')
+_____________________________________________________
+Complex Model Train MSE: 0.0013027722600054074
+Complex Model val MSE: 0.00038988632924333885
+
+
+***********
+Complex model made by ChatGPT WITH 512 EPOCHS
+***********
+_____________________________________________________
+Complex Model Train MSE: 0.001538216684046957
+Complex Model val MSE: 0.0004741420812904375
+
+
+***********
+Mix model
+***********
+model = Sequential()
+model.add(LSTM(128, activation='relu', input_shape=(train_features.shape[1], train_features.shape[2]),
+               return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(BatchNormalization())
+model.add(LSTM(128, activation='relu', return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(BatchNormalization())
+model.add(LSTM(64, activation='relu', return_sequences=False))
+model.add(BatchNormalization())
+model.add(Dense(1))
+model.compile(optimizer="adam", loss='mse')
+_____________________________________________________
+Complex Model Train MSE: 0.026331077732038813
+Complex Model val MSE: 0.0006597778948885303
+
+
+***********
+Mix model 2
+***********
+model = Sequential()
+model.add(LSTM(128, activation='relu', input_shape=(train_features.shape[1], train_features.shape[2]),
+               return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(BatchNormalization())
+model.add(LSTM(64, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(units=64, activation='relu'))
+model.add(Dense(1))
+_____________________________________________________
+Complex Model Train MSE: 0.0006408931826508305
+Complex Model val MSE: 0.0005700384498495621
+
+
+
+***********
+Mix model 3
+***********
+model = Sequential()
+model.add(LSTM(128, activation='relu', input_shape=(train_features.shape[1], train_features.shape[2]),
+               return_sequences=True, dropout=0.2, recurrent_dropout=0.2))
+model.add(LSTM(64, activation='relu', return_sequences=True))
+model.add(LSTM(64, activation='relu', return_sequences=True))
+model.add(LSTM(32, activation='relu'))
+model.add(Dense(1))
+_____________________________________________________
+Complex Model Train MSE: 0.0008635715756696357
+Complex Model val MSE: 0.0005864660788387851
+

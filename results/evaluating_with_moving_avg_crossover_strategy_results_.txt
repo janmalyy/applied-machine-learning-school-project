@@ -1,0 +1,43 @@
+Linear, val set:
+stock hold: 10
+money: -328.27
+buy counter: 21
+sell counter: 20
+__________________________________
+__________________________________
+Linear, test set:
+stock hold: 0
+money: -462.4
+buy counter: 25
+sell counter: 25
+__________________________________
+RNN, test set:
+stock hold: 0
+money: -703.47
+buy counter: 41
+sell counter: 41
+__________________________________
+LSTM, test set:
+stock hold: 0
+money: -463.4
+buy counter: 24
+sell counter: 24
+__________________________________
+Complex, test set:
+stock hold: 0
+money: -389.83
+buy counter: 23
+sell counter: 23
+__________________________________
+Transformer, test set:
+stock hold: 0
+money: -360.13
+buy counter: 19
+sell counter: 19
+__________________________________
+__________________________________
+Test data, test set: 			# já tomu nějak nerozumím... jakože i když se tam dají ta reálná data a ne predikce, tak ten algoritmus prodělává...
+stock hold: 0
+money: -315.58
+buy counter: 29
+sell counter: 29
